@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Observable, of } from 'rxjs';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -18,6 +19,8 @@ export class UsersController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
+    console.log('controle createUserDto = ', createUserDto);
+
     return this.usersService.create(createUserDto);
   }
 
