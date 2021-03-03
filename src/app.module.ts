@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import Joi from '@hapi/joi';
+import { DatabaseModule } from './databases/database.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import Joi from '@hapi/joi';
         PORT: Joi.number(),
       }),
     }),
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
