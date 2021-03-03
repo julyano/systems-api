@@ -1,8 +1,8 @@
 import { Column, Entity, Unique } from 'typeorm';
 import { BaseEntity } from './base.entity';
 
-@Entity()
-@Unique(['email'])
+@Entity('users')
+@Unique(['email', 'username'])
 export class User extends BaseEntity {
   @Column({ nullable: false, type: 'varchar', length: 50 })
   username: string;
