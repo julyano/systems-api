@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { DeleteUserDto } from './dto/delete-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
 import { UserRepository } from './users.repository';
 
 @Injectable()
@@ -64,8 +63,6 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<UpdateUserDto> {
-    console.log('updateUserDto = ', updateUserDto);
-
     return await this.userRepository
       .update(id, updateUserDto)
       .then((user) => {
@@ -75,13 +72,26 @@ export class UsersService {
       })
       .catch((error) => {
         throw new HttpException(
-          'Falha ao atualiza dados do usuário',
+          'Falha ao atualizar dados do usuário',
           HttpStatus.NOT_FOUND,
         );
       });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number): Promise<DeleteUserDto> {
+    return await this.userRepository
+      .findOne(id)
+      .then((user) => {
+        return this.userRepository
+          .delete(id)
+          .then((u) => DeleteUserDto.fromEntity(user))
+          .catch();
+      })
+      .catch((error) => {
+        throw new HttpException(
+          'Falha ao remover usuário',
+          HttpStatus.NOT_FOUND,
+        );
+      });
   }
 }
