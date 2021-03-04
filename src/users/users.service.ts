@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -31,12 +31,32 @@ export class UsersService {
       .then((user) => CreateUserDto.fromEntity(user));
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<CreateUserDto[]> {
+    return await this.userRepository
+      .find()
+      .then((users) => {
+        const returnedUsers: CreateUserDto[] = [];
+        users.forEach((user) => {
+          returnedUsers.push(CreateUserDto.fromEntity(user));
+        });
+
+        return returnedUsers;
+      })
+      .catch((error) => {
+        throw new HttpException(
+          'Falha ao obter usuários',
+          HttpStatus.NOT_FOUND,
+        );
+      });
   }
 
-  findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
+  findOne(id: number): Promise<CreateUserDto | undefined> {
+    return this.userRepository
+      .findOne(id)
+      .then((user) => CreateUserDto.fromEntity(user))
+      .catch((error) => {
+        throw new HttpException('Falha ao obter usuário', HttpStatus.NOT_FOUND);
+      });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

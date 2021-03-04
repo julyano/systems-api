@@ -23,13 +23,13 @@ export class UsersController {
   }
 
   @Get()
-  findAll(): Observable<any[]> {
-    return of([this.usersService.findAll()]);
+  findAll(): Promise<CreateUserDto[]> {
+    return this.usersService.findAll();
   }
 
-  @Get(':username')
-  findOne(@Param('username') username: string) {
-    return this.usersService.findOne(username);
+  @Get(':id')
+  findOne(@Param('id') id: string): Promise<CreateUserDto> {
+    return this.usersService.findOne(+id);
   }
 
   @Put(':id')
