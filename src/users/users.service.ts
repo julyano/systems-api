@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Observable, of } from 'rxjs';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -27,11 +26,9 @@ export class UsersService {
   ) {}
 
   create(createUserDto: CreateUserDto): Promise<CreateUserDto> {
-    console.log('createUserDto = ', createUserDto);
-
     return this.userRepository
-      .save(CreateUserDto.toEntity(new User()))
-      .then((e) => CreateUserDto.fromEntity(e));
+      .save(CreateUserDto.toEntity(createUserDto))
+      .then((user) => CreateUserDto.fromEntity(user));
   }
 
   findAll() {
