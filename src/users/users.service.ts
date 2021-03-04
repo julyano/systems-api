@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -50,8 +51,8 @@ export class UsersService {
       });
   }
 
-  findOne(id: number): Promise<CreateUserDto | undefined> {
-    return this.userRepository
+  async findOne(id: number): Promise<CreateUserDto | undefined> {
+    return await this.userRepository
       .findOne(id)
       .then((user) => CreateUserDto.fromEntity(user))
       .catch((error) => {
@@ -59,8 +60,25 @@ export class UsersService {
       });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateUserDto> {
+    console.log('updateUserDto = ', updateUserDto);
+
+    return await this.userRepository
+      .update(id, updateUserDto)
+      .then((user) => {
+        return this.userRepository
+          .findOne(id)
+          .then((u) => UpdateUserDto.fromEntity(u));
+      })
+      .catch((error) => {
+        throw new HttpException(
+          'Falha ao atualiza dados do usuário',
+          HttpStatus.NOT_FOUND,
+        );
+      });
   }
 
   remove(id: number) {

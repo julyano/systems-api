@@ -12,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Observable, of } from 'rxjs';
 import { User } from './entities/user.entity';
+import { UpdateResult } from 'typeorm';
 
 @Controller('users')
 export class UsersController {
@@ -32,9 +33,9 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Put()
+  update(@Body() updateUserDto: UpdateUserDto): Promise<UpdateUserDto> {
+    return this.usersService.update(+updateUserDto.id, updateUserDto);
   }
 
   @Delete(':id')
