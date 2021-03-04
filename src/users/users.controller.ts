@@ -13,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Observable, of } from 'rxjs';
 import { User } from './entities/user.entity';
 import { UpdateResult } from 'typeorm';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -39,7 +40,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<DeleteUserDto> {
     return this.usersService.remove(+id);
   }
 }
