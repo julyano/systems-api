@@ -1,7 +1,7 @@
 import { User } from '../entities/user.entity';
 
 export class CreateUserDto {
-  public id: number;
+  id?: number;
   username: string;
   displayname?: string;
   fullname: string;
@@ -19,8 +19,6 @@ export class CreateUserDto {
   }
 
   public static fromEntity(entity: User) {
-    console.log('entity = ', entity);
-
     return this.from({
       id: entity.id,
       username: entity.username,
@@ -30,17 +28,16 @@ export class CreateUserDto {
     });
   }
 
-  public static toEntity(user: User = null) {
-    console.log('user = ', user);
-    console.log('this = ', this.prototype.username);
-
-    const userAux = new User();
-    userAux.id = this.prototype.id;
-    userAux.username = this.prototype.username;
-    userAux.fullname = this.prototype.fullname;
-    userAux.createDateTime = new Date();
-    userAux.createdBy = this.prototype.id as any; //user ? (user.id as any) : null;
-    userAux.lastChangedBy = this.prototype.id as any; //user ? (user.id as any) : null;
-    return userAux;
+  public static toEntity(dto: CreateUserDto) {
+    const user = new User();
+    user.username = dto.username;
+    user.fullname = dto.fullname;
+    user.email = dto.email;
+    user.role = 'USER';
+    user.password = dto.password;
+    user.createDateTime = new Date();
+    user.createdBy = dto.username; //user ? (user.id as any) : null;
+    user.lastChangedBy = dto.username; //user ? (user.id as any) : null;
+    return user;
   }
 }
