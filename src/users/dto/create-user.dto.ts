@@ -36,8 +36,8 @@ export class CreateUserDto {
     user.role = 'USER';
     user.password = dto.password;
     user.createDateTime = new Date();
-    user.createdBy = dto.username; //user ? (user.id as any) : null;
-    user.lastChangedBy = dto.username; //user ? (user.id as any) : null;
+    user.createdBy = dto.username;
+    user.lastChangedBy = dto.username;
     return user;
   }
 }
