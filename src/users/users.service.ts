@@ -59,6 +59,23 @@ export class UsersService {
       });
   }
 
+  async getUser(username: string, password: string): Promise<CreateUserDto> {
+    let result = null;
+    await this.userRepository
+      .createQueryBuilder('users')
+      .where('users.username = :username', { username: username })
+      .andWhere('users.password = :password', { password: password })
+      .getOne()
+      .then((user) => {
+        result = CreateUserDto.fromEntity(user);
+      })
+      .catch((error) => {
+        throw new HttpException('Falha ao obter usuário', HttpStatus.NOT_FOUND);
+      });
+
+    return result;
+  }
+
   async update(
     id: number,
     updateUserDto: UpdateUserDto,
