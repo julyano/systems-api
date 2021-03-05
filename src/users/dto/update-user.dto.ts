@@ -14,7 +14,6 @@ export class UpdateUserDto {
     updateUserDTO.username = dto.username;
     updateUserDTO.fullname = dto.fullname;
     updateUserDTO.email = dto.email;
-    updateUserDTO.password = dto.password;
     return updateUserDTO;
   }
 
@@ -24,7 +23,6 @@ export class UpdateUserDto {
       username: entity.username,
       fullname: entity.fullname,
       email: entity.email,
-      password: entity.password,
     });
   }
 }

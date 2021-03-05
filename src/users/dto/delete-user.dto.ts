@@ -14,7 +14,6 @@ export class DeleteUserDto {
     deleteeUserDTO.username = dto.username;
     deleteeUserDTO.fullname = dto.fullname;
     deleteeUserDTO.email = dto.email;
-    deleteeUserDTO.password = dto.password;
     return deleteeUserDTO;
   }
 
@@ -24,7 +23,6 @@ export class DeleteUserDto {
       username: entity.username,
       fullname: entity.fullname,
       email: entity.email,
-      password: entity.password,
     });
   }
 }

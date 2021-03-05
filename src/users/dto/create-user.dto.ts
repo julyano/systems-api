@@ -14,7 +14,6 @@ export class CreateUserDto {
     createUserDTO.username = dto.username;
     createUserDTO.fullname = dto.fullname;
     createUserDTO.email = dto.email;
-    createUserDTO.password = dto.password;
     return createUserDTO;
   }
 
@@ -24,7 +23,6 @@ export class CreateUserDto {
       username: entity.username,
       fullname: entity.fullname,
       email: entity.email,
-      password: entity.password,
     });
   }
 
