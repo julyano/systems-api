@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Crypto } from 'src/security/crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { DeleteUserDto } from './dto/delete-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,19 +8,6 @@ import { UserRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  private readonly users: any = [
-    {
-      userId: 1,
-      username: 'john',
-      password: 'changeme',
-    },
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-    },
-  ];
-
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
@@ -50,7 +38,7 @@ export class UsersService {
       });
   }
 
-  async findOne(id: number): Promise<CreateUserDto | undefined> {
+  async findOne(id: number): Promise<CreateUserDto> {
     return await this.userRepository
       .findOne(id)
       .then((user) => CreateUserDto.fromEntity(user))
@@ -61,6 +49,8 @@ export class UsersService {
 
   async getUser(username: string, password: string): Promise<CreateUserDto> {
     let result = null;
+    password = await Crypto.encrypt(password);
+
     await this.userRepository
       .createQueryBuilder('users')
       .where('users.username = :username', { username: username })
@@ -80,12 +70,24 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<UpdateUserDto> {
+    const findedUser = await this.userRepository
+      .findOne(id)
+      .then((user) => UpdateUserDto.fromEntity(user))
+      .catch((error) => {
+        throw new HttpException(
+          'Falha ao encontrar usuário',
+          HttpStatus.NOT_FOUND,
+        );
+      });
+
+    if (updateUserDto.password) {
+      updateUserDto.password = await Crypto.encrypt(updateUserDto.password);
+    }
+
     return await this.userRepository
       .update(id, updateUserDto)
       .then((user) => {
-        return this.userRepository
-          .findOne(id)
-          .then((u) => UpdateUserDto.fromEntity(u));
+        return UpdateUserDto.from(updateUserDto);
       })
       .catch((error) => {
         throw new HttpException(
@@ -96,14 +98,19 @@ export class UsersService {
   }
 
   async remove(id: number): Promise<DeleteUserDto> {
-    return await this.userRepository
+    const findedUser = await this.userRepository
       .findOne(id)
-      .then((user) => {
-        return this.userRepository
-          .delete(id)
-          .then((u) => DeleteUserDto.fromEntity(user))
-          .catch();
-      })
+      .then((user) => DeleteUserDto.fromEntity(user))
+      .catch((error) => {
+        throw new HttpException(
+          'Falha ao encontrar usuário',
+          HttpStatus.NOT_FOUND,
+        );
+      });
+
+    return await this.userRepository
+      .delete(id)
+      .then((user) => DeleteUserDto.from(findedUser))
       .catch((error) => {
         throw new HttpException(
           'Falha ao remover usuário',
