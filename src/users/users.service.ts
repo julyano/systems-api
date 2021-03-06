@@ -49,21 +49,23 @@ export class UsersService {
 
   async getUser(username: string, password: string): Promise<CreateUserDto> {
     let result = null;
-    password = await Crypto.encrypt(password);
 
     await this.userRepository
       .createQueryBuilder('users')
       .where('users.username = :username', { username: username })
-      .andWhere('users.password = :password', { password: password })
       .getOne()
       .then((user) => {
-        result = CreateUserDto.fromEntity(user);
+        result = user;
       })
       .catch((error) => {
         throw new HttpException('Falha ao obter usuário', HttpStatus.NOT_FOUND);
       });
 
-    return result;
+    if (!Crypto.check(password, result.password)) {
+      throw new HttpException('Falha ao obter usuário', HttpStatus.NOT_FOUND);
+    }
+
+    return CreateUserDto.fromEntity(result);
   }
 
   async update(
