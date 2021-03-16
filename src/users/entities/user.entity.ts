@@ -1,6 +1,7 @@
-import { BeforeInsert, Column, Entity, Unique } from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany, Unique } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Crypto } from 'src/security/crypto';
+import { Application } from './application.entity';
 
 @Entity('users')
 @Unique(['email', 'username'])
@@ -28,6 +29,9 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true, type: 'varchar', length: 64 })
   refreshToken: string;
+
+  @OneToMany(() => Application, (application: Application) => application.owner)
+  public applications: Application[];
 
   @BeforeInsert()
   async hashPassword() {
