@@ -6,10 +6,12 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './databases/database.module';
+import { ApplicationsModule } from './applications/applications.module';
 
 @Module({
   imports: [
     UsersModule,
+    ApplicationsModule,
     AuthModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({

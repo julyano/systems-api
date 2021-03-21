@@ -4,10 +4,13 @@ import { Crypto } from 'src/security/crypto';
 import { Application } from './application.entity';
 
 @Entity('users')
-@Unique(['email', 'username'])
+@Unique(['email', 'username', 'uuid'])
 export class User extends BaseEntity {
   @Column({ nullable: false, type: 'varchar', length: 50 })
   username: string;
+
+  @Column({ nullable: true, type: 'varchar', length: 500 })
+  uuid: string;
 
   @Column({ nullable: true, type: 'varchar', length: 100 })
   displayname?: string;

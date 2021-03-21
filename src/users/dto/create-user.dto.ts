@@ -1,4 +1,4 @@
-import { User } from '../entities/user.entity';
+import { User } from '../../entities/user.entity';
 
 export class CreateUserDto {
   id?: number;
@@ -28,6 +28,7 @@ export class CreateUserDto {
 
   public static toEntity(dto: CreateUserDto) {
     const user = new User();
+    user.id = dto.id;
     user.username = dto.username;
     user.fullname = dto.fullname;
     user.email = dto.email;

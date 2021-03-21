@@ -13,10 +13,11 @@ export class UsersService {
     private userRepository: UserRepository,
   ) {}
 
-  create(createUserDto: CreateUserDto): Promise<CreateUserDto> {
-    return this.userRepository
-      .save(CreateUserDto.toEntity(createUserDto))
-      .then((user) => CreateUserDto.fromEntity(user));
+  async create(createUserDto: CreateUserDto): Promise<CreateUserDto> {
+    const user = await this.userRepository.save(
+      CreateUserDto.toEntity(createUserDto),
+    );
+    return CreateUserDto.fromEntity(user);
   }
 
   async findAll(): Promise<CreateUserDto[]> {
@@ -68,12 +69,9 @@ export class UsersService {
     return CreateUserDto.fromEntity(result);
   }
 
-  async update(
-    id: number,
-    updateUserDto: UpdateUserDto,
-  ): Promise<UpdateUserDto> {
+  async update(updateUserDto: UpdateUserDto): Promise<UpdateUserDto> {
     const findedUser = await this.userRepository
-      .findOne(id)
+      .findOne(updateUserDto.id)
       .then((user) => UpdateUserDto.fromEntity(user))
       .catch((error) => {
         throw new HttpException(
@@ -87,7 +85,7 @@ export class UsersService {
     }
 
     return await this.userRepository
-      .update(id, updateUserDto)
+      .update(findedUser.id, updateUserDto)
       .then((user) => {
         return UpdateUserDto.from(updateUserDto);
       })
