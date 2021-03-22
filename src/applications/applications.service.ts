@@ -118,7 +118,10 @@ export class ApplicationsService {
     return await this.applicationRepository
       .update(findedApp.id, updateApplicationDto)
       .then((app) => {
-        return UpdateApplicationDto.from(updateApplicationDto);
+        return UpdateApplicationDto.from({
+          id: updateApplicationDto.id,
+          name: updateApplicationDto.name,
+        });
       })
       .catch((error) => {
         throw new HttpException('aplicação', error.status);
@@ -139,7 +142,12 @@ export class ApplicationsService {
 
     return await this.applicationRepository
       .delete(findedApp.id)
-      .then((app) => DeleteApplicationDto.from(findedApp))
+      .then((app) =>
+        DeleteApplicationDto.from({
+          id: findedApp.id,
+          name: findedApp.name,
+        }),
+      )
       .catch((error) => {
         throw new HttpException('aplicação', error.status);
       });
