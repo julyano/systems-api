@@ -7,14 +7,17 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseFilters,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DeleteUserDto } from './dto/delete-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
 
 @Controller('users')
+@UseFilters(HttpExceptionFilter)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
