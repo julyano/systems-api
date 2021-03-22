@@ -7,8 +7,10 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseFilters,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
@@ -16,6 +18,7 @@ import { DeleteApplicationDto } from './dto/delete-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 
 @Controller('applications')
+@UseFilters(HttpExceptionFilter)
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
