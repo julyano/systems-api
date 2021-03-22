@@ -21,11 +21,8 @@ export class ApplicationsService {
       .then((result) => {
         return CreateApplicationDto.fromEntity(result);
       })
-      .catch((e) => {
-        throw new HttpException(
-          'Falha ao criar aplicação',
-          HttpStatus.NOT_FOUND,
-        );
+      .catch((error) => {
+        throw new HttpException('aplicação', error.status);
       });
 
     return app;
@@ -45,17 +42,18 @@ export class ApplicationsService {
         });
         return returnedApps;
       })
-      .catch((e) => {
-        throw new HttpException(
-          'Falha ao obter aplicações',
-          HttpStatus.NOT_FOUND,
-        );
+      .catch((error) => {
+        throw new HttpException('aplicações', error.status);
       });
   }
 
   async findAllRelated(
     createUserDto: CreateUserDto,
   ): Promise<CreateApplicationDto[]> {
+    if (!createUserDto.id) {
+      throw new HttpException('usuário', HttpStatus.BAD_REQUEST);
+    }
+
     return await this.applicationRepository
       .find({
         relations: ['owner'],
@@ -72,15 +70,16 @@ export class ApplicationsService {
         });
         return returnedApps;
       })
-      .catch((e) => {
-        throw new HttpException(
-          'Falha ao obter aplicações',
-          HttpStatus.NOT_FOUND,
-        );
+      .catch((error) => {
+        throw new HttpException('aplicações', error.status);
       });
   }
 
   async findOne(id: number): Promise<CreateApplicationDto> {
+    if (!id) {
+      throw new HttpException('aplicação', HttpStatus.BAD_REQUEST);
+    }
+
     return await this.applicationRepository
       .find({
         relations: ['owner'],
@@ -97,25 +96,23 @@ export class ApplicationsService {
         });
         return returnedApps;
       })
-      .catch((e) => {
-        throw new HttpException(
-          'Falha ao obter aplicação',
-          HttpStatus.NOT_FOUND,
-        );
+      .catch((error) => {
+        throw new HttpException('aplicação', error.status);
       });
   }
 
   async update(
     updateApplicationDto: UpdateApplicationDto,
   ): Promise<CreateApplicationDto> {
+    if (!updateApplicationDto.id) {
+      throw new HttpException('aplicação', HttpStatus.BAD_REQUEST);
+    }
+
     const findedApp = await this.applicationRepository
       .findOne(updateApplicationDto.id)
       .then((app) => UpdateApplicationDto.fromEntity(app))
       .catch((error) => {
-        throw new HttpException(
-          'Falha ao encontrar aplicação',
-          HttpStatus.NOT_FOUND,
-        );
+        throw new HttpException('aplicação', error.status);
       });
 
     return await this.applicationRepository
@@ -124,32 +121,27 @@ export class ApplicationsService {
         return UpdateApplicationDto.from(updateApplicationDto);
       })
       .catch((error) => {
-        throw new HttpException(
-          'Falha ao atualizar dados da aplicação',
-          HttpStatus.NOT_FOUND,
-        );
+        throw new HttpException('aplicação', error.status);
       });
   }
 
   async remove(id: number): Promise<DeleteApplicationDto> {
+    if (!id) {
+      throw new HttpException('aplicação', HttpStatus.BAD_REQUEST);
+    }
+
     const findedApp = await this.applicationRepository
       .findOne(id)
       .then((app) => DeleteApplicationDto.fromEntity(app))
       .catch((error) => {
-        throw new HttpException(
-          'Falha ao encontrar aplicação',
-          HttpStatus.NOT_FOUND,
-        );
+        throw new HttpException('aplicação', error.status);
       });
 
     return await this.applicationRepository
       .delete(findedApp.id)
       .then((app) => DeleteApplicationDto.from(findedApp))
       .catch((error) => {
-        throw new HttpException(
-          'Falha ao remover aplicação',
-          HttpStatus.NOT_FOUND,
-        );
+        throw new HttpException('aplicação', error.status);
       });
   }
 }
